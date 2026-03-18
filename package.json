@@ -1,5 +1,5 @@
 {
-  "name": "bitnaro_backend",
+  "name": "backend_izu",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
@@ -10,15 +10,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/FSDTeam-SAA/bitnaro_backend.git"
+    "url": "git+https://github.com/FSDTeam-SAA/backend_izu.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/FSDTeam-SAA/bitnaro_backend/issues"
+    "url": "https://github.com/FSDTeam-SAA/backend_izu/issues"
   },
-  "homepage": "https://github.com/FSDTeam-SAA/bitnaro_backend#readme",
+  "homepage": "https://github.com/FSDTeam-SAA/backend_izu#readme",
   "description": "",
   "dependencies": {
     "bcrypt": "^5.1.1",

@@ -1,0 +1,1725 @@
+{
+  "info": {
+    "name": "Backend Izu API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection generated from the current Express route and controller code in this repository.\n\nConventions:\n- All mounted API routes use `{{baseUrl}}`, which expands to `{{serverUrl}}{{apiPrefix}}`.\n- The collection uses bearer auth by default with `{{accessToken}}`.\n- Login, refresh, and several create endpoints store useful ids/tokens back into collection and environment variables.\n\nCodebase caveats reflected here:\n- `/auth/logout` and `/auth/change-password` are declared without auth middleware, but their controllers expect `req.user`. They are configured here with bearer auth because that is the only way they make sense semantically.\n- `POST /messages/:chatId/message` still validates `chatId` from the request body. This collection sends the same variable in both places.\n- `src/routes/stripe.webhook.route.js` exists, but it is not mounted under `src/app.js` or `config/route.config.js`. It is documented under `Internal` as an unmounted route.\n- Admin routes are authenticated, but no admin-only role middleware is currently applied in the route file."
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "serverUrl",
+      "value": "http://localhost:8001",
+      "type": "string",
+      "description": "Local server base URL"
+    },
+    {
+      "key": "apiPrefix",
+      "value": "/api/v1",
+      "type": "string",
+      "description": "Mounted API prefix from src/app.js"
+    },
+    {
+      "key": "baseUrl",
+      "value": "{{serverUrl}}{{apiPrefix}}",
+      "type": "string",
+      "description": "Computed API base URL"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string",
+      "description": "JWT access token returned by login"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string",
+      "description": "JWT refresh token returned by login"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "type": "string",
+      "description": "Authenticated user id or latest created user id"
+    },
+    {
+      "key": "participantId",
+      "value": "",
+      "type": "string",
+      "description": "Other chat participant user id"
+    },
+    {
+      "key": "providerUserId",
+      "value": "",
+      "type": "string",
+      "description": "Provider user id"
+    },
+    {
+      "key": "categoryId",
+      "value": "",
+      "type": "string",
+      "description": "Category id"
+    },
+    {
+      "key": "serviceId",
+      "value": "",
+      "type": "string",
+      "description": "Service id"
+    },
+    {
+      "key": "bookingId",
+      "value": "",
+      "type": "string",
+      "description": "Booking id"
+    },
+    {
+      "key": "chatId",
+      "value": "",
+      "type": "string",
+      "description": "Chat id"
+    },
+    {
+      "key": "notificationId",
+      "value": "",
+      "type": "string",
+      "description": "Notification id"
+    },
+    {
+      "key": "paymentIntentId",
+      "value": "",
+      "type": "string",
+      "description": "Stripe PaymentIntent id"
+    },
+    {
+      "key": "userEmail",
+      "value": "user@example.com",
+      "type": "string",
+      "description": "Sample end-user email"
+    },
+    {
+      "key": "providerEmail",
+      "value": "provider@example.com",
+      "type": "string",
+      "description": "Sample provider email"
+    },
+    {
+      "key": "adminEmail",
+      "value": "admin@example.com",
+      "type": "string",
+      "description": "Sample admin email"
+    },
+    {
+      "key": "userPassword",
+      "value": "Passw0rd!",
+      "type": "string",
+      "description": "Sample password"
+    },
+    {
+      "key": "otp",
+      "value": "123456",
+      "type": "string",
+      "description": "OTP value used in auth recovery flow"
+    },
+    {
+      "key": "language",
+      "value": "English",
+      "type": "string",
+      "description": "Allowed values include English and Deutsch"
+    },
+    {
+      "key": "bookingTime",
+      "value": "2026-03-20T10:00:00.000Z",
+      "type": "string",
+      "description": "ISO booking timestamp"
+    },
+    {
+      "key": "latitude",
+      "value": "23.8103",
+      "type": "string",
+      "description": "Provider latitude"
+    },
+    {
+      "key": "longitude",
+      "value": "90.4125",
+      "type": "string",
+      "description": "Provider longitude"
+    },
+    {
+      "key": "page",
+      "value": "1",
+      "type": "string",
+      "description": "Pagination page"
+    },
+    {
+      "key": "limit",
+      "value": "10",
+      "type": "string",
+      "description": "Pagination limit"
+    },
+    {
+      "key": "year",
+      "value": "2026",
+      "type": "string",
+      "description": "Reporting year"
+    },
+    {
+      "key": "days",
+      "value": "7",
+      "type": "string",
+      "description": "Recent activity filter. Allowed: 1 or 7"
+    },
+    {
+      "key": "timeFilter",
+      "value": "7days",
+      "type": "string",
+      "description": "Top services filter. Use 7days or leave blank"
+    },
+    {
+      "key": "search",
+      "value": "clean",
+      "type": "string",
+      "description": "Free-text history search"
+    },
+    {
+      "key": "messagesLimit",
+      "value": "30",
+      "type": "string",
+      "description": "Message page size"
+    },
+    {
+      "key": "messagesBefore",
+      "value": "",
+      "type": "string",
+      "description": "Message cursor: ObjectId or ISO date"
+    },
+    {
+      "key": "profileImagePath",
+      "value": "",
+      "type": "string",
+      "description": "Local file path for profile image upload"
+    },
+    {
+      "key": "categoryImagePath",
+      "value": "",
+      "type": "string",
+      "description": "Local file path for category image upload"
+    },
+    {
+      "key": "serviceThumbnailOnePath",
+      "value": "",
+      "type": "string",
+      "description": "Local file path for service thumbnail 1"
+    },
+    {
+      "key": "serviceThumbnailTwoPath",
+      "value": "",
+      "type": "string",
+      "description": "Local file path for service thumbnail 2"
+    },
+    {
+      "key": "serviceThumbnailThreePath",
+      "value": "",
+      "type": "string",
+      "description": "Local file path for service thumbnail 3"
+    },
+    {
+      "key": "messageFileOnePath",
+      "value": "",
+      "type": "string",
+      "description": "Local file path for message attachment 1"
+    },
+    {
+      "key": "messageFileTwoPath",
+      "value": "",
+      "type": "string",
+      "description": "Local file path for message attachment 2"
+    },
+    {
+      "key": "stripeSignature",
+      "value": "",
+      "type": "string",
+      "description": "Stripe signature header for webhook testing"
+    }
+  ],
+  "item": [
+    {
+      "name": "System",
+      "description": "Top-level server routes outside `/api/v1`.",
+      "item": [
+        {
+          "name": "Root Ping",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Public root route from `src/app.js`. No `/health` endpoint is mounted in the current codebase.",
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{serverUrl}}/"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "description": "Authentication and credential recovery flows.",
+      "item": [
+        {
+          "name": "Register User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const setVar = (key, value) => {",
+                  "  if (value === undefined || value === null || value === '') return;",
+                  "  pm.collectionVariables.set(key, String(value));",
+                  "  if (pm.environment) pm.environment.set(key, String(value));",
+                  "};",
+                  "const json = pm.response.json();",
+                  "setVar('userId', json?.data?.userId);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Creates a new user or provider account. `accountType` must be one of `user`, `provider`, or `admin`.",
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Alex User\",\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"{{userPassword}}\",\n  \"accountType\": \"user\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const setVar = (key, value) => {",
+                  "  if (value === undefined || value === null || value === '') return;",
+                  "  pm.collectionVariables.set(key, String(value));",
+                  "  if (pm.environment) pm.environment.set(key, String(value));",
+                  "};",
+                  "const json = pm.response.json();",
+                  "setVar('accessToken', json?.data?.accessToken);",
+                  "setVar('refreshToken', json?.data?.refreshToken);",
+                  "setVar('userId', json?.data?.userId);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Authenticates a user and returns access and refresh tokens.",
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"{{userPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Requests an OTP for password reset.",
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/forgot-password"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{userEmail}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Validates the email and OTP pair.",
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/verify-otp"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{userEmail}}\",\n  \"otp\": \"{{otp}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Resets the password using email plus OTP.",
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/reset-password"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{userEmail}}\",\n  \"otp\": \"{{otp}}\",\n  \"newPassword\": \"NewPassw0rd!\",\n  \"confirmPassword\": \"NewPassw0rd!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Access Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const setVar = (key, value) => {",
+                  "  if (value === undefined || value === null || value === '') return;",
+                  "  pm.collectionVariables.set(key, String(value));",
+                  "  if (pm.environment) pm.environment.set(key, String(value));",
+                  "};",
+                  "const json = pm.response.json();",
+                  "setVar('accessToken', json?.data?.accessToken);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Returns a new access token when given a valid refresh token.",
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh-token"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "description": "Controller expects `req.user`, even though the route is currently declared without auth middleware. Send bearer auth here.",
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Change Password (Declared Auth Route)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Declared in the route file, but the controller currently depends on `req.user` and references `httpStatus` without importing it. Use this as route documentation, not as a guaranteed working endpoint.",
+            "url": {
+              "raw": "{{baseUrl}}/auth/change-password"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"oldPassword\": \"{{userPassword}}\",\n  \"newPassword\": \"NewPassw0rd!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "description": "Authenticated profile and account preferences endpoints.",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Returns the authenticated profile for non-provider accounts.",
+            "url": {
+              "raw": "{{baseUrl}}/profile"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Provider Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Returns provider profile details plus services and aggregated rating.",
+            "url": {
+              "raw": "{{baseUrl}}/profile/provider"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "description": "Multipart profile update. Add a local file path to `{{profileImagePath}}` if you want to upload an image.",
+            "url": {
+              "raw": "{{baseUrl}}/profile"
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Alex",
+                  "type": "text"
+                },
+                {
+                  "key": "lastName",
+                  "value": "User",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "{{userEmail}}",
+                  "type": "text"
+                },
+                {
+                  "key": "phone",
+                  "value": "+8801700000000",
+                  "type": "text"
+                },
+                {
+                  "key": "bio",
+                  "value": "Experienced service customer",
+                  "type": "text"
+                },
+                {
+                  "key": "profileImage",
+                  "type": "file",
+                  "src": "{{profileImagePath}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Language",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Allowed values in the schema are `English` and `Deutsch`. The controller also contains an Arabic literal, but the model enum does not.",
+            "url": {
+              "raw": "{{baseUrl}}/profile/language"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"language\": \"{{language}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Service History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Returns grouped booking history for the authenticated user.",
+            "url": {
+              "raw": "{{baseUrl}}/profile/service-history",
+              "query": [
+                {
+                  "key": "search",
+                  "value": "{{search}}",
+                  "description": "Optional service-name filter",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Authenticated profile password change endpoint.",
+            "url": {
+              "raw": "{{baseUrl}}/profile/change-password"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"{{userPassword}}\",\n  \"newPassword\": \"NewPassw0rd!\",\n  \"confirmPassword\": \"NewPassw0rd!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "description": "Category management endpoints.",
+      "item": [
+        {
+          "name": "Create Category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const setVar = (key, value) => {",
+                  "  if (value === undefined || value === null || value === '') return;",
+                  "  pm.collectionVariables.set(key, String(value));",
+                  "  if (pm.environment) pm.environment.set(key, String(value));",
+                  "};",
+                  "const json = pm.response.json();",
+                  "setVar('categoryId', json?.data?._id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "description": "Multipart category creation. Add a local file path to `{{categoryImagePath}}` for `catImage`.",
+            "url": {
+              "raw": "{{baseUrl}}/categories"
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Home Cleaning",
+                  "type": "text"
+                },
+                {
+                  "key": "catImage",
+                  "type": "file",
+                  "src": "{{categoryImagePath}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categories"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Services",
+      "description": "Service catalogue and provider-owned service management.",
+      "item": [
+        {
+          "name": "Create Service",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const setVar = (key, value) => {",
+                  "  if (value === undefined || value === null || value === '') return;",
+                  "  pm.collectionVariables.set(key, String(value));",
+                  "  if (pm.environment) pm.environment.set(key, String(value));",
+                  "};",
+                  "const json = pm.response.json();",
+                  "setVar('serviceId', json?.data?._id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "description": "Provider-only multipart endpoint. `serviceDetails` can be sent as a JSON string, which matches the controller logic.",
+            "url": {
+              "raw": "{{baseUrl}}/services"
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "category",
+                  "value": "{{categoryId}}",
+                  "type": "text"
+                },
+                {
+                  "key": "serviceDetails",
+                  "value": "{\n  \"title\": \"Deep Cleaning\",\n  \"serviceType\": \"hourly\",\n  \"hourlyPrice\": 40,\n  \"perSessionPrice\": 120,\n  \"details\": \"Detailed apartment cleaning service\",\n  \"isActive\": true,\n  \"address\": \"Downtown\"\n}",
+                  "type": "text"
+                },
+                {
+                  "key": "serviceThumbnails",
+                  "type": "file",
+                  "src": "{{serviceThumbnailOnePath}}"
+                },
+                {
+                  "key": "serviceThumbnails",
+                  "type": "file",
+                  "src": "{{serviceThumbnailTwoPath}}"
+                },
+                {
+                  "key": "serviceThumbnails",
+                  "type": "file",
+                  "src": "{{serviceThumbnailThreePath}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All And Popular Services",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/services"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Own Services",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Returns services owned by the authenticated provider.",
+            "url": {
+              "raw": "{{baseUrl}}/services/own-services"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Service Details",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const setVar = (key, value) => {",
+                  "  if (value === undefined || value === null || value === '') return;",
+                  "  pm.collectionVariables.set(key, String(value));",
+                  "  if (pm.environment) pm.environment.set(key, String(value));",
+                  "};",
+                  "const json = pm.response.json();",
+                  "setVar('serviceId', json?.data?._id);",
+                  "setVar('providerUserId', json?.data?.providerId?._id || json?.data?.provider?._id || json?.data?.providerId);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/services/{{serviceId}}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Category Wise Services",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/services/categoryWise/{{categoryId}}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Service",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "description": "Multipart service update. Send only the fields you want to change.",
+            "url": {
+              "raw": "{{baseUrl}}/services/{{serviceId}}"
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "category",
+                  "value": "{{categoryId}}",
+                  "type": "text"
+                },
+                {
+                  "key": "serviceDetails",
+                  "value": "{\n  \"title\": \"Deep Cleaning Premium\",\n  \"serviceType\": \"hourly\",\n  \"hourlyPrice\": 45,\n  \"details\": \"Updated service details\"\n}",
+                  "type": "text"
+                },
+                {
+                  "key": "serviceThumbnails",
+                  "type": "file",
+                  "src": "{{serviceThumbnailOnePath}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Service",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/services/delete/{{serviceId}}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Bookings",
+      "description": "Booking lifecycle endpoints for customers and providers.",
+      "item": [
+        {
+          "name": "Create Booking",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const setVar = (key, value) => {",
+                  "  if (value === undefined || value === null || value === '') return;",
+                  "  pm.collectionVariables.set(key, String(value));",
+                  "  if (pm.environment) pm.environment.set(key, String(value));",
+                  "};",
+                  "const json = pm.response.json();",
+                  "setVar('bookingId', json?.data?._id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Creates a booking in `pending` state. For hourly bookings, `estimatedHours` multiplies the service hourly price.",
+            "url": {
+              "raw": "{{baseUrl}}/bookings"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"serviceId\": \"{{serviceId}}\",\n  \"title\": \"Deep Cleaning Booking\",\n  \"bookingTime\": \"{{bookingTime}}\",\n  \"location\": {\n    \"type\": \"Point\",\n    \"coordinates\": [\n      \"{{longitude}}\",\n      \"{{latitude}}\"\n    ],\n    \"address\": \"Dhaka, Bangladesh\"\n  },\n  \"estimatedHours\": 2,\n  \"bookingType\": \"hourly\",\n  \"extraNote\": \"Please bring your own supplies.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Booking",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/cancel/{{bookingId}}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Confirm Start Request",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "description": "User-side confirmation when the provider asks to start the service.",
+            "url": {
+              "raw": "{{baseUrl}}/bookings/confirm/{{bookingId}}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Confirm Completion Request",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "description": "User-side confirmation when the provider asks to complete the service.",
+            "url": {
+              "raw": "{{baseUrl}}/bookings/confirm-completion/{{bookingId}}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Submit Service Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/review/{{bookingId}}"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"serviceId\": \"{{serviceId}}\",\n  \"rating\": 5,\n  \"message\": \"Excellent service.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Live Bookings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/live",
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Upcoming Bookings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/upcoming",
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Cancelled Bookings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/cancelled",
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Completed Bookings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/completed",
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Providers",
+      "description": "Provider workflow endpoints.",
+      "item": [
+        {
+          "name": "Update Location",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/providers/location"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"latitude\": {{latitude}},\n  \"longitude\": {{longitude}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Pending Requests",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/providers/pending-requests"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Accept Request",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/providers/accept-request/{{bookingId}}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Start Service",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/providers/start-service/{{bookingId}}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Request",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/providers/cancel-request/{{bookingId}}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Live Bookings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/providers/live-bookings"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Upcoming Bookings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/providers/upcoming-bookings"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Completed And Cancelled Bookings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/providers/completed-cancelled-bookings"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Complete Booking",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/providers/complete-booking/{{bookingId}}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Provider Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/providers/stats"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Booking Location",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/providers/{{bookingId}}/location"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Messages",
+      "description": "Chat creation, attachments, and history.",
+      "item": [
+        {
+          "name": "Create Chat",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const setVar = (key, value) => {",
+                  "  if (value === undefined || value === null || value === '') return;",
+                  "  pm.collectionVariables.set(key, String(value));",
+                  "  if (pm.environment) pm.environment.set(key, String(value));",
+                  "};",
+                  "const json = pm.response.json();",
+                  "setVar('chatId', json?.data?._id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/messages/create"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"participantId\": \"{{participantId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Send Message",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "description": "The route includes `:chatId`, but the controller also requires `chatId` in the body. This request sends both.",
+            "url": {
+              "raw": "{{baseUrl}}/messages/{{chatId}}/message"
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "chatId",
+                  "value": "{{chatId}}",
+                  "type": "text"
+                },
+                {
+                  "key": "content",
+                  "value": "Hello from Postman",
+                  "type": "text"
+                },
+                {
+                  "key": "contentType",
+                  "value": "text",
+                  "type": "text"
+                },
+                {
+                  "key": "files",
+                  "type": "file",
+                  "src": "{{messageFileOnePath}}"
+                },
+                {
+                  "key": "files",
+                  "type": "file",
+                  "src": "{{messageFileTwoPath}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Chats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/messages"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Messages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/messages/{{chatId}}/messages",
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "{{messagesLimit}}"
+                },
+                {
+                  "key": "before",
+                  "value": "{{messagesBefore}}",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "description": "Notification listing and read-state updates.",
+      "item": [
+        {
+          "name": "Get Notifications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notifications",
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                },
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Admin Notifications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/admin"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Mark Notification As Read",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/{{notificationId}}/read"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Mark All Notifications As Read",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/read-all"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "description": "Stripe payment and provider onboarding endpoints.",
+      "item": [
+        {
+          "name": "Create Payment Intent",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const setVar = (key, value) => {",
+                  "  if (value === undefined || value === null || value === '') return;",
+                  "  pm.collectionVariables.set(key, String(value));",
+                  "  if (pm.environment) pm.environment.set(key, String(value));",
+                  "};",
+                  "const json = pm.response.json();",
+                  "const clientSecret = json?.clientSecret || '';",
+                  "if (clientSecret.includes('_secret_')) {",
+                  "  setVar('paymentIntentId', clientSecret.split('_secret_')[0]);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Creates a Stripe PaymentIntent and stores a pending payment record. The response contains `clientSecret`; the test script extracts `paymentIntentId` automatically.",
+            "url": {
+              "raw": "{{baseUrl}}/payments/create-payment"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 80,\n  \"bookingId\": \"{{bookingId}}\",\n  \"providerId\": \"{{providerUserId}}\",\n  \"paymentType\": \"booking\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Confirm Payment",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const setVar = (key, value) => {",
+                  "  if (value === undefined || value === null || value === '') return;",
+                  "  pm.collectionVariables.set(key, String(value));",
+                  "  if (pm.environment) pm.environment.set(key, String(value));",
+                  "};",
+                  "const json = pm.response.json();",
+                  "setVar('paymentIntentId', json?.paymentIntent?.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Confirms a successful PaymentIntent by id after Stripe completes the charge.",
+            "url": {
+              "raw": "{{baseUrl}}/payments/confirm-payment"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paymentIntentId\": \"{{paymentIntentId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Stripe Connect Account",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "description": "Creates or reuses an Express Stripe Connect account and returns the onboarding URL.",
+            "url": {
+              "raw": "{{baseUrl}}/payments/connect"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "description": "Reporting and dashboard endpoints. The route file applies authentication, but no admin role restriction middleware.",
+      "item": [
+        {
+          "name": "Get Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/statistics"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Revenue By Month",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/revenue-by-month",
+              "query": [
+                {
+                  "key": "year",
+                  "value": "{{year}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Recent Activity",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/recent-activity",
+              "query": [
+                {
+                  "key": "days",
+                  "value": "{{days}}",
+                  "description": "Allowed values: 1 or 7"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Top Services",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/top-services",
+              "query": [
+                {
+                  "key": "timeFilter",
+                  "value": "{{timeFilter}}",
+                  "description": "Use `7days` or leave blank for all time",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/users",
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Provider List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/providers",
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Commission Reports",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/commission-reports",
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Internal",
+      "description": "Routes that exist in code but are not mounted as public API endpoints.",
+      "item": [
+        {
+          "name": "Stripe Webhook (Unmounted)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Stripe-Signature",
+                "value": "{{stripeSignature}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Declared in `src/routes/stripe.webhook.route.js`, but not mounted under the main router. Keep this as internal documentation unless the route is wired into the app.",
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{serverUrl}}/webhook"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"evt_test_webhook\",\n  \"type\": \"account.updated\",\n  \"data\": {\n    \"object\": {\n      \"id\": \"acct_test_123\",\n      \"charges_enabled\": true,\n      \"details_submitted\": true\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

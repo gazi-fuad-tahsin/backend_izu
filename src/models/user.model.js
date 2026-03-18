@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
   phone: { type: String },
   language: {
     type: String,
-    enum: ["English", "Deutsch", "عربي"],
+    enum: ["English", "Deutsch"],
     default: "English",
   },
   createdAt: { type: Date, default: Date.now },
