@@ -8,6 +8,7 @@ const providerSchema = new mongoose.Schema({
   },
   name: { type: String },
   email: { type: String },
+  phone: { type: String },
   availability: [{ type: Date }],
   isActive: { type: Boolean, default: true },
   location: {

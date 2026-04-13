@@ -1,12 +1,11 @@
-import { User } from "../models/user.model.js";
-import { Booking } from "../models/booking.model.js";
-import { sendResponse, uploadOnCloudinary } from "../utility/helper.js";
+import bcrypt from "bcryptjs";
 import AppError from "../errors/appError.js";
-import catchAsync from "../utility/catchAsync.js";
-import { paymentInfo } from "../models/payment.model.js";
+import { Booking } from "../models/booking.model.js";
 import { Provider } from "../models/provider.model.js";
 import { Service } from "../models/service.model.js";
-import bcrypt from "bcryptjs";
+import { User } from "../models/user.model.js";
+import catchAsync from "../utility/catchAsync.js";
+import { sendResponse, uploadOnCloudinary } from "../utility/helper.js";
 
 // For user and admin
 export const getProfile = catchAsync(async (req, res, next) => {
@@ -200,6 +199,9 @@ export const changePassword = catchAsync(async (req, res, next) => {
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: "Password changed successfully",
+    data:{
+      message: "Password changed successfully"
+    }
+    
   });
 });

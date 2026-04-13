@@ -1,23 +1,23 @@
-import { User } from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import {
-  sendResponse,
-  sendPasswordResetCode,
-  generateVerificationCode,
-} from "../utility/helper.js";
 import AppError from "../errors/appError.js";
-import catchAsync from "../utility/catchAsync.js";
 import { Provider } from "../models/provider.model.js";
+import { User } from "../models/user.model.js";
+import catchAsync from "../utility/catchAsync.js";
+import {
+  generateVerificationCode,
+  sendPasswordResetCode,
+  sendResponse,
+} from "../utility/helper.js";
 
 const generateToken = (userId, secret, expiry) => {
   return jwt.sign({ id: userId }, secret, { expiresIn: expiry });
 };
 
 export const signup = catchAsync(async (req, res, next) => {
-  const { name, email, password, accountType } = req.body;
+  const { name, email, password, accountType, phone } = req.body;
 
-  if (!name || !email || !password || !accountType) {
+  if (!name || !email || !password || !accountType || !phone) {
     return next(new AppError(400, "All fields are required"));
   }
 
@@ -32,6 +32,7 @@ export const signup = catchAsync(async (req, res, next) => {
     email,
     password: hashedPassword,
     accountType,
+    phone,
   });
 
   if (accountType === "provider") {
@@ -39,6 +40,7 @@ export const signup = catchAsync(async (req, res, next) => {
       providerId: user._id,
       name: user.name,
       email: user.email,
+      phone,
       location: {
         type: "Point",
         coordinates: [0, 0],
@@ -50,7 +52,7 @@ export const signup = catchAsync(async (req, res, next) => {
     statusCode: 201,
     success: true,
     message: "User registered successfully",
-    data: { userId: user._id, email: user.email },
+    data: { userId: user._id, email: user.email, phone },
   });
 });
 
@@ -204,7 +206,7 @@ export const refreshAccessToken = catchAsync(async (req, res, next) => {
     statusCode: 200,
     success: true,
     message: "Access token refreshed successfully",
-    data: { accessToken },
+    data: { accessToken, role: user.accountType },
   });
 });
 
