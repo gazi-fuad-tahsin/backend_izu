@@ -35,6 +35,29 @@ function ioHandler(server) {
     socket.on("provider-location-update", ({ providerId, location }) =>
       io.emit("provider-location-update", { providerId, location })
     );
+
+    // Audio call signaling (WebRTC)
+    socket.on("call:initiate", ({ to, from, chatId, offer }) => {
+      console.log(`User ${from} is initiating a call to ${to} in chat ${chatId}`);
+      io.to(to).emit("call:incoming", { from, chatId, offer });
+    });
+
+    socket.on("call:answer", ({ to, from, answer }) => {
+      io.to(to).emit("call:answered", { from, answer });
+    });
+
+    socket.on("call:ice-candidate", ({ to, candidate }) => {
+      io.to(to).emit("call:ice-candidate", { candidate });
+    });
+
+    socket.on("call:reject", ({ to, from }) => {
+      io.to(to).emit("call:rejected", { from });
+    });
+
+    socket.on("call:end", ({ to, from }) => {
+      io.to(to).emit("call:ended", { from });
+    });
+
     socket.on("disconnect", () => console.log("User disconnected:", socket.id));
   });
 
