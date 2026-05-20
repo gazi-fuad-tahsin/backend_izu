@@ -232,6 +232,7 @@ export const confirmCompletionRequest = catchAsync(async (req, res, next) => {
   const userId = req.user._id;
 
   const booking = await (Booking.findById(bookingId));
+  console.log(booking.userId.toString(), userId.toString(), booking.status);
 
   if (
     !booking ||
@@ -298,26 +299,23 @@ export const submitServiceReview = catchAsync(async (req, res, next) => {
     );
   }
 
-  const service = await Service.findById(serviceId).populate({
-    path: "providerId",
-    populate: {
-      path: "providerId",
-      model: "User",
-      select: "name email profileImage",
-    },
-  });
+const service = await Service.findById(serviceId).populate("providerId", "name email profileImage");
   if (!service) return next(new AppError(404, "Service not found"));
 
-  const provider = await Provider.findById(booking.providerId).populate(
+  
+  const provider = await Provider.findOne({ providerId: booking.providerId }).populate(
     "providerId",
     "name email profileImage"
   );
   if (!provider) return next(new AppError(404, "Provider document not found"));
 
+  console.log("Provider's userId:", provider.providerId._id.toString());
+  console.log("Booking's providerId:", booking.providerId.toString());
+
   // Ensure the service provider matches the booking provider
   if (
     provider.providerId._id.toString() !==
-    service.providerId.providerId._id.toString()
+    service.providerId._id.toString()
   ) {
     return next(
       new AppError(
@@ -326,7 +324,7 @@ export const submitServiceReview = catchAsync(async (req, res, next) => {
       )
     );
   }
-
+ 
   const newReview = {
     rating: parseInt(rating),
     message: message?.trim() || "",
@@ -384,7 +382,7 @@ export const getLiveBookings = catchAsync(async (req, res, next) => {
   filter.status = { $in: ["ongoing", "awaiting-user-confirmation-for-acceptance", "awaiting-user-confirmation-for-completion", "waiting-for-start"] };
   console.log(filter);
   const liveBookings = await populateBookings(
-    Booking.find(filter).skip(skip).limit(limit).sort({ bookingTime: 1 })
+    Booking.find(filter).skip(skip).limit(limit).sort({ bookingTime: -1 })
   );
   console.log(liveBookings);
   sendResponse(res, {
