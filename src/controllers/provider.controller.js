@@ -255,7 +255,7 @@ export const getLiveBookings = catchAsync(async (req, res, next) => {
     Booking.find({
       providerId: provider.providerId,
       status: { $in: ["ongoing", "awaiting-user-confirmation-for-acceptance", "waiting-for-start"] },
-    })
+    }).sort({ bookingTime: -1 })
   );
 
   console.log(liveBookings);
