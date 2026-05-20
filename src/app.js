@@ -1,11 +1,11 @@
-import express from "express";
 import cors from "cors";
-import routes from "../config/route.config.js";
-import notFound from "./middlewares/notFound.middlewares.js";
-import globalErrorHandler from "./middlewares/globalError.middlewares.js";
-import { Server } from "socket.io";
+import express from "express";
 import cron from "node-cron";
+import { Server } from "socket.io";
+import routes from "../config/route.config.js";
 import { checkUpcomingBookings } from "./controllers/provider.controller.js";
+import globalErrorHandler from "./middlewares/globalError.middlewares.js";
+import notFound from "./middlewares/notFound.middlewares.js";
 
 const app = express();
 
@@ -21,7 +21,10 @@ function ioHandler(server) {
   });
 
   io.on("connection", (socket) => {
+
+    // console.log("New client connected:", socket.id);
     socket.on("join", (userId) => {
+      console.log(`User ${userId} is trying to join with socket ID ${socket.id}`);
       socket.join(userId);
       console.log(`User ${userId} joined`);
     });
@@ -73,4 +76,5 @@ cron.schedule("*/1 * * * *", async () => {
   }
 });
 export default app;
-export { ioHandler, getIO };
+export { getIO, ioHandler };
+

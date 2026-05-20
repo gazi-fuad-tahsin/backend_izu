@@ -1,16 +1,15 @@
-import { Service } from "../models/service.model.js";
-import { Provider } from "../models/provider.model.js";
-import { Booking } from "../models/booking.model.js";
-import { sendResponse } from "../utility/helper.js";
-import AppError from "../errors/appError.js";
-import catchAsync from "../utility/catchAsync.js";
 import { getIO } from "../app.js";
+import AppError from "../errors/appError.js";
+import { Booking } from "../models/booking.model.js";
 import { Notification } from "../models/notification.model.js";
-import mongoose from "mongoose";
+import { Provider } from "../models/provider.model.js";
+import { Service } from "../models/service.model.js";
 import {
   populateBooking,
   populateBookings,
 } from "../utility/booking_population.js";
+import catchAsync from "../utility/catchAsync.js";
+import { sendResponse } from "../utility/helper.js";
 
 const populateForProvider = [
   { path: "serviceId", select: "title serviceDetails" },
@@ -100,15 +99,16 @@ export const createBooking = catchAsync(async (req, res, next) => {
     extraNote,
     status: "pending",
     providerId: service.providerId,
+    requestSent : true
   });
 
   if (!booking) return next(new AppError(500, "Failed to create booking"));
 
-  if (service.providerId) {
-    booking.providerId = new mongoose.Types.ObjectId(service.providerId);
-    booking.requestSent = false;
-    await booking.save();
-  }
+  // if (service.providerId) {
+  //   booking.providerId = new mongoose.Types.ObjectId(service.providerId);
+  //   booking.requestSent = false;
+  //   await booking.save();
+  // }
 
   let booking1 = await populateBooking(Booking.findById(booking._id));
 
@@ -127,7 +127,7 @@ export const cancelBooking = catchAsync(async (req, res, next) => {
   const booking = await populateBooking(
     Booking.findOne({
       _id: bookingId,
-      status: { $in: ["pending", "upcoming", "accepted"] },
+      status: { $in: ["pending", "upcoming", "accepted", "awaiting-user-confirmation-for-acceptance", "waiting-for-start"] },
       userId,
     })
   );
@@ -381,7 +381,7 @@ export const getLiveBookings = catchAsync(async (req, res, next) => {
     filter.userId = userId;
   }
 
-  filter.status = { $in: ["ongoing", "awaiting-user-confirmation-for-acceptance", "awaiting-user-confirmation-for-completion"] };
+  filter.status = { $in: ["ongoing", "awaiting-user-confirmation-for-acceptance", "awaiting-user-confirmation-for-completion", "waiting-for-start"] };
   console.log(filter);
   const liveBookings = await populateBookings(
     Booking.find(filter).skip(skip).limit(limit).sort({ bookingTime: 1 })

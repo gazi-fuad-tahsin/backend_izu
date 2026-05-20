@@ -39,6 +39,7 @@ const bookingSchema = new mongoose.Schema(
         "awaiting-user-confirmation-for-completion",
         "awaiting-user-confirmation-for-acceptance",
         "request-confirmed",
+        "waiting-for-start"
       ],
       default: "pending",
       index: true,

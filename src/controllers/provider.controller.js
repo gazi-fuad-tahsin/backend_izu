@@ -1,17 +1,14 @@
-import { Service } from "../models/service.model.js";
-import { Provider } from "../models/provider.model.js";
-import { Booking } from "../models/booking.model.js";
-import { sendResponse } from "../utility/helper.js";
-import AppError from "../errors/appError.js";
-import catchAsync from "../utility/catchAsync.js";
 import { getIO } from "../app.js";
+import AppError from "../errors/appError.js";
+import { Booking } from "../models/booking.model.js";
 import { Notification } from "../models/notification.model.js";
-import { User } from "../models/user.model.js";
-import { paymentInfo } from "../models/payment.model.js";
+import { Provider } from "../models/provider.model.js";
 import {
   populateBooking,
   populateBookings,
 } from "../utility/booking_population.js";
+import catchAsync from "../utility/catchAsync.js";
+import { sendResponse } from "../utility/helper.js";
 
 const populateForProvider = [
   { path: "serviceId", select: "title serviceDetails" },
@@ -126,7 +123,7 @@ export const acceptRequest = catchAsync(async (req, res, next) => {
     return next(new AppError(404, "Request not found or unauthorized"));
   }
 
-  booking.status = "upcoming";
+  booking.status = "waiting-for-start";
   booking.requestAccepted = true;
   booking = await booking.save();
   booking = await populateBooking(Booking.findById(bookingId));
@@ -257,7 +254,7 @@ export const getLiveBookings = catchAsync(async (req, res, next) => {
   const liveBookings = await populateBookings(
     Booking.find({
       providerId: provider.providerId,
-      status: { $in: ["ongoing", "awaiting-user-confirmation-for-acceptance"] },
+      status: { $in: ["ongoing", "awaiting-user-confirmation-for-acceptance", "waiting-for-start"] },
     })
   );
 
@@ -280,7 +277,7 @@ export const getUpcomingBookings = catchAsync(async (req, res, next) => {
 
   const upcomingBookings = await populateBookings(
     Booking.find({
-      providerId: providerActualId,
+      providerId: providerId,
       status: "upcoming",
     })
   );
