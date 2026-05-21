@@ -1,8 +1,7 @@
-import { Service } from "../models/service.model.js";
-import { sendResponse, uploadOnCloudinary } from "../utility/helper.js";
 import AppError from "../errors/appError.js";
+import { Service } from "../models/service.model.js";
 import catchAsync from "../utility/catchAsync.js";
-import mongoose from "mongoose";
+import { sendResponse, uploadOnCloudinary } from "../utility/helper.js";
 
 // CREATE SERVICE
 export const createService = catchAsync(async (req, res, next) => {
@@ -233,7 +232,9 @@ export const deleteService = catchAsync(async (req, res, next) => {
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: "Service deleted successfully",
+    data: {
+        message: "Service deleted successfully",
+    }
   });
 });
 
