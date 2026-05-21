@@ -124,16 +124,24 @@ export const cancelBooking = catchAsync(async (req, res, next) => {
   const { bookingId } = req.params;
   const userId = req.user._id;
 
-  const booking = await populateBooking(
-    Booking.findOne({
-      _id: bookingId,
-      status: { $in: ["pending", "upcoming", "accepted", "awaiting-user-confirmation-for-acceptance", "waiting-for-start"] },
-      userId,
-    })
-  );
+  // Find raw Mongoose document (not lean) so .save() works
+  const booking = await Booking.findOne({ _id: bookingId, userId });
 
   if (!booking) {
     return next(new AppError(404, "Booking not found or unauthorized"));
+  }
+
+  const cancellableStatuses = [
+    "pending",
+    "upcoming",
+    "accepted",
+    "awaiting-user-confirmation-for-acceptance",
+    "waiting-for-start",
+  ];
+  if (!cancellableStatuses.includes(booking.status)) {
+    return next(
+      new AppError(400, `Booking cannot be cancelled in '${booking.status}' status`)
+    );
   }
 
   booking.status = "cancelled";
@@ -143,27 +151,18 @@ export const cancelBooking = catchAsync(async (req, res, next) => {
   io.to(userId.toString()).emit("booking-cancelled-user", { bookingId });
 
   if (booking.providerId) {
-    // extract provider's userId properly
-    const providerUserId =
-      booking.providerId.providerId?._id || booking.providerId._id;
+    const providerUserId = booking.providerId.toString();
 
-    io.to(providerUserId.toString()).emit("booking-cancelled-provider", {
-      bookingId,
-    });
+    io.to(providerUserId).emit("booking-cancelled-provider", { bookingId });
 
     const notification = await Notification.create({
-      userId: providerUserId,
+      userId: booking.providerId,
       bookingId,
       type: "booking-cancelled",
-      message: `The booking has been cancelled by the ${req.user.name}.`,
+      message: `The booking has been cancelled by ${req.user.name}.`,
     });
 
-    io.to(providerUserId.toString()).emit("notification", notification);
-  }
-
-  if (booking.serviceId && Array.isArray(booking.serviceId.serviceDetails)) {
-    booking.serviceId.serviceDetails =
-      booking.serviceId.serviceDetails[0] || null;
+    io.to(providerUserId).emit("notification", notification);
   }
 
   sendResponse(res, {

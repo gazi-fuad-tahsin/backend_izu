@@ -433,11 +433,11 @@ export const getProviderStats = catchAsync(async (req, res, next) => {
   const providerActualId = provider._id;
 
   const completedBookings = await Booking.countDocuments({
-    providerId: providerActualId,
+    providerId: providerId,
     status: "completed",
   });
   const totalEarnings = await Booking.aggregate([
-    { $match: { providerId: providerActualId, status: "completed" } },
+    { $match: { providerId: providerId, status: "completed" } },
     { $group: { _id: null, total: { $sum: "$providerAmount" } } },
   ]).then((result) => result[0]?.total || 0);
 
