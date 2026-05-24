@@ -296,13 +296,11 @@ export const getCompletedAndCancelledBookings = catchAsync(
     const provider = await Provider.findOne({ providerId });
     if (!provider) return next(new AppError(404, "Provider not found"));
 
-    const providerActualId = provider._id;
-
     const completedAndCancelledBookings = await populateBookings(
       Booking.find({
-        providerId: providerActualId,
+        providerId: provider.providerId,
         status: { $in: ["completed", "cancelled"] },
-      })
+      }).sort({ bookingTime: -1 })
     );
     let completed = completedAndCancelledBookings.filter(
       (booking) => booking.status === "completed"
@@ -311,14 +309,6 @@ export const getCompletedAndCancelledBookings = catchAsync(
     let cancelled = completedAndCancelledBookings.filter(
       (booking) => booking.status === "cancelled"
     );
-
-    if (
-      completedAndCancelledBookings[0].serviceId &&
-      Array.isArray(completedAndCancelledBookings[0].serviceId.serviceDetails)
-    ) {
-      completedAndCancelledBookings[0].serviceId.serviceDetails =
-        completedAndCancelledBookings[0].serviceId.serviceDetails[0] || null;
-    }
 
     sendResponse(res, {
       statusCode: 200,

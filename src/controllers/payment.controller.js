@@ -1,9 +1,9 @@
-import { paymentInfo } from "../models/payment.model.js";
-import { User } from "../models/user.model.js";
 import Stripe from "stripe";
+import { getIO } from "../app.js";
 import { Booking } from "../models/booking.model.js";
 import { Notification } from "../models/notification.model.js";
-import { getIO } from "../app.js";
+import { paymentInfo } from "../models/payment.model.js";
+import { User } from "../models/user.model.js";
 import { populateBooking } from "../utility/booking_population.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
@@ -45,8 +45,10 @@ export const createPayment = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      clientSecret: paymentIntent.client_secret,
       message: "PaymentIntent created.",
+      data:{
+        clientSecret: paymentIntent.client_secret,
+      }
     });
   } catch (error) {
     console.error("Error creating PaymentIntent:", error);

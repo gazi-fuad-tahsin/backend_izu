@@ -112,6 +112,24 @@ export const createBooking = catchAsync(async (req, res, next) => {
 
   let booking1 = await populateBooking(Booking.findById(booking._id));
 
+  if (service.providerId) {
+    const providerUserId = service.providerId.toString();
+
+    const notification = await Notification.create({
+      userId: service.providerId,
+      bookingId: booking._id,
+      type: "booking-created",
+      message: `New booking request from ${req.user.name} for ${title}.`,
+    });
+
+    io.to(providerUserId).emit("booking-created", {
+      booking: booking1,
+      notification,
+    });
+
+    io.to(providerUserId).emit("notification", notification);
+  }
+
   sendResponse(res, {
     statusCode: 201,
     success: true,
